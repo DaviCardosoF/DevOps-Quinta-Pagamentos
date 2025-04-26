@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Pagamento de Produto</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      max-width: 500px;
+    }
+    input, button {
+      display: block;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+    }
+    .mensagem {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Registrar Pagamento</h1>
+
+  <label for="id_produto">ID do Produto:</label>
+  <input type="text" id="id_produto" placeholder="Digite o ID do produto">
+
+  <label for="valor">Valor:</label>
+  <input type="number" id="valor" placeholder="Digite o valor do pagamento">
+
+  <button onclick="enviarPagamento()">Pagar</button>
+
+  <div class="mensagem" id="mensagem"></div>
+
+  <script>
+    async function enviarPagamento() {
+      const id_produto = document.getElementById("id_produto").value;
+      const valor = document.getElementById("valor").value;
+      const mensagemDiv = document.getElementById("mensagem");
+
+      try {
+        const response = await fetch("http://localhost:5000/api-flask/pagar", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ id_produto, valor })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          mensagemDiv.innerHTML = `<strong>Sucesso:</strong> ${result.mensagem}`;
+        } else {
+          mensagemDiv.innerHTML = `<strong>Erro:</strong> ${result.erro}`;
+        }
+      } catch (err) {
+        mensagemDiv.innerHTML = `<strong>Erro:</strong> ${err.message}`;
+      }
+    }
+  </script>
+</body>
+</html>
